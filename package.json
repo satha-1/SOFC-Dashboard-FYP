@@ -1,0 +1,20 @@
+{
+  "name": "sofc-scada-dashboard",
+  "version": "1.0.0",
+  "description": "SOFC Fuel Cell Monitoring Web Application",
+  "private": true,
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:server": "cd backend && npm run dev",
+    "dev:client": "cd frontend && npm run dev",
+    "build": "npm run build:server && npm run build:client",
+    "build:server": "cd backend && npm run build",
+    "build:client": "cd frontend && npm run build",
+    "start": "cd backend && npm run start",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+
