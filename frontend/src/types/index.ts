@@ -28,7 +28,15 @@ export interface WsHistoryMessage {
   data: SofcReading[];
 }
 
-export type WsMessage = WsReadingMessage | WsStatusMessage | WsHistoryMessage;
+export interface WsSimulinkMessage {
+  type: 'simulink-sample';
+  payload: {
+    time: number;
+    data: Record<string, number | null>;
+  };
+}
+
+export type WsMessage = WsReadingMessage | WsStatusMessage | WsHistoryMessage | WsSimulinkMessage;
 
 // Connection status
 export type ConnectionStatus = 'connecting' | 'live' | 'disconnected' | 'demo';

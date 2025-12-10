@@ -7,11 +7,13 @@ import {
   Users,
   Settings,
   Cpu,
+  LineChart,
 } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { path: '/simulink', label: 'Simulation Analytics', icon: LineChart },
   { path: '/reports', label: 'Reports', icon: FileText },
   { path: '/logs', label: 'Logs', icon: List },
   { path: '/users', label: 'User Activity', icon: Users },

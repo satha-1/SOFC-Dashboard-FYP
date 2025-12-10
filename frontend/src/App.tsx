@@ -7,6 +7,7 @@ import Reports from './features/reports/Reports';
 import Logs from './features/logs/Logs';
 import UserActivity from './features/users/UserActivity';
 import Settings from './features/settings/Settings';
+import SimulinkPage from './features/simulink/SimulinkPage';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 
@@ -50,6 +51,7 @@ function App() {
         <Route path="reports" element={<Reports />} />
         <Route path="logs" element={<Logs />} />
         <Route path="users" element={<UserActivity />} />
+        <Route path="simulink" element={<SimulinkPage />} />
         <Route path="settings" element={<Settings />} />
       </Route>
       

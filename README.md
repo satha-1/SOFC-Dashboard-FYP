@@ -9,6 +9,7 @@ A professional, real-time monitoring web application for Solid Oxide Fuel Cell (
 ## Features
 
 - 📊 **Real-time Monitoring** - Live data from Arduino sensors via WebSocket
+- 🔬 **Simulink Integration** - Stream simulation data from MATLAB/Simulink models
 - 📈 **Interactive Charts** - Temperature and pressure trends with Recharts
 - 📋 **Data Logging** - Historical readings with search and filtering
 - 📄 **PDF Reports** - Generate downloadable reports with statistics
@@ -32,6 +33,7 @@ A professional, real-time monitoring web application for Solid Oxide Fuel Cell (
 - Express (HTTP API)
 - WebSocket (real-time data)
 - SerialPort (Arduino communication)
+- Simulink data ingestion (HTTP POST from MATLAB)
 
 ## Project Structure
 
@@ -44,23 +46,27 @@ sofc-scada-dashboard/
 │   │   ├── websocket.ts    # WebSocket server
 │   │   ├── storage.ts      # In-memory data storage
 │   │   ├── mockData.ts     # Mock SOFC metrics generator
-│   │   └── types.ts        # TypeScript definitions
+│   │   ├── types.ts        # TypeScript definitions
+│   │   └── simulink/       # Simulink data streaming
+│   │       ├── simStream.ts # Simulink sample storage & broadcast
+│   │       └── types.ts     # Simulink type definitions
 │   ├── package.json
 │   └── tsconfig.json
 ├── frontend/
 │   ├── src/
 │   │   ├── components/     # Shared UI components
-│   │   ├── context/        # React contexts (Auth, Theme)
-│   │   ├── features/       # Feature modules
+│   │   ├── context/         # React contexts (Auth, Theme)
+│   │   ├── features/        # Feature modules
 │   │   │   ├── dashboard/
 │   │   │   ├── analytics/
+│   │   │   ├── simulink/   # Simulink visualization
 │   │   │   ├── reports/
 │   │   │   ├── logs/
 │   │   │   ├── users/
 │   │   │   ├── settings/
 │   │   │   └── auth/
-│   │   ├── hooks/          # Custom React hooks
-│   │   └── types/          # TypeScript definitions
+│   │   ├── hooks/           # Custom React hooks
+│   │   └── types/           # TypeScript definitions
 │   ├── package.json
 │   └── vite.config.ts
 ├── package.json            # Root package with dev scripts
@@ -93,7 +99,7 @@ sofc-scada-dashboard/
    SERIAL_BAUD=9600          # Must match Arduino Serial.begin() rate
 
    # Server Configuration
-   PORT=3001
+   PORT=3000
 
    # Frontend URL (for CORS)
    FRONTEND_URL=http://localhost:5173
@@ -199,7 +205,7 @@ float readTemperature(int pin) {
 
 ## WebSocket Messages
 
-Connect to `ws://localhost:3001/ws` to receive real-time data:
+Connect to `ws://localhost:3000/ws` to receive real-time data:
 
 ```typescript
 // Incoming message types:
@@ -218,6 +224,116 @@ Connect to `ws://localhost:3001/ws` to receive real-time data:
 
 If no Arduino is connected, the app automatically runs in **demo mode**, generating simulated sensor data. This allows you to explore all features without hardware.
 
+## Simulink Data Streaming
+
+The dashboard can receive real-time simulation data from MATLAB/Simulink models.
+
+### Setup
+
+1. **Place your MATLAB script** (`data_extract_YSZ.m`) in your Simulink project directory:
+   ```
+   C:\Users\saths\OneDrive\Desktop\2025 Projects\sofcfrompy - Copy22_New\sofcfrompy - Copy22
+   ```
+
+2. **Update the MATLAB script** to use the correct backend endpoint:
+   ```matlab
+   %% ---------------- Config ----------------
+   url = 'http://localhost:3000/data';   % Backend API port (NOT 5173 which is the frontend)
+   options = weboptions('MediaType','application/json');
+   throttleDelay = 0.01;
+   ```
+   
+   **IMPORTANT - Port Configuration:** 
+   - **Port 5173** = Frontend (React/Vite dev server) - DO NOT use this for POST requests
+   - **Port 3000** = Backend (Node/Express API) - **Use this for MATLAB POST requests**
+   
+   The backend runs on port 3000 by default. If you change it in `backend/.env`, update the MATLAB script accordingly.
+
+3. **Start the backend server:**
+   ```bash
+   npm run dev:server
+   ```
+
+4. **Start the frontend:**
+   ```bash
+   npm run dev:client
+   ```
+
+### Running a Simulation
+
+1. **Start the backend and frontend servers:**
+   ```bash
+   npm run dev
+   ```
+
+2. **Open MATLAB and navigate to your Simulink project directory:**
+   ```
+   C:\Users\saths\OneDrive\Desktop\2025 Projects\sofcfrompy - Copy22_New\sofcfrompy - Copy22
+   ```
+
+3. **Run your Simulink model:**
+   ```matlab
+   out = sim('sofc_sim');  % or your model name
+   ```
+
+4. **Execute the extraction script:**
+   ```matlab
+   data_extract_YSZ
+   ```
+   The script will:
+   - Extract all `ScopeData*` signals from the simulation output
+   - Handle nested bus signals (creates labels like "parentName – childName")
+   - Send HTTP POST requests to `http://localhost:3000/data` with each time step
+   - Throttle requests at 0.01 seconds between samples
+
+5. **Open the dashboard:**
+   - Go to http://localhost:5173/simulink
+   - You should see live charts updating as MATLAB sends data
+   - The backend will log the first few samples to the console for debugging
+
+### Data Format
+
+The MATLAB script should send JSON payloads like:
+```json
+{
+  "time": 0.5,
+  "data": {
+    "stackV": 8.5,
+    "stackI": 12.3,
+    "airFlow": 5.2,
+    "fuelFlow": 2.1,
+    ...
+  }
+}
+```
+
+Where:
+- `time` - Simulation time in seconds (scalar)
+- `data` - Object with signal names as keys and numeric values
+
+### API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/data` | Receive Simulink sample (used by MATLAB) |
+| POST | `/api/sim-data` | Alternative endpoint (same as `/data`) |
+| GET | `/api/sim/history?limit=1000` | Get historical Simulink samples |
+| GET | `/api/sim/latest` | Get most recent Simulink sample |
+| GET | `/api/sim/fields` | Get all unique signal names |
+
+### WebSocket Messages
+
+Simulink samples are broadcast via WebSocket:
+```typescript
+{
+  "type": "simulink-sample",
+  "payload": {
+    "time": 0.5,
+    "data": { "stackV": 8.5, ... }
+  }
+}
+```
+
 ## Color Palette
 
 The dashboard uses a professional color scheme:
@@ -233,10 +349,11 @@ The dashboard uses a professional color scheme:
 
 1. **Dashboard** - Live sensor values, charts, and system schematic
 2. **Analytics** - Efficiency metrics, temperature distribution, I-V curves
-3. **Reports** - Generate PDF reports with statistics
-4. **Logs** - Searchable table of all readings with anomaly filtering
-5. **User Activity** - Mock user management dashboard
-6. **Settings** - Serial port, thresholds, and theme configuration
+3. **Simulation Analytics** - Real-time Simulink model data visualization
+4. **Reports** - Generate PDF reports with statistics
+5. **Logs** - Searchable table of all readings with anomaly filtering
+6. **User Activity** - Mock user management dashboard
+7. **Settings** - Serial port, thresholds, and theme configuration
 
 ## License
 

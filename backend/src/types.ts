@@ -19,7 +19,7 @@ export interface SofcReading extends ArduinoReading {
 }
 
 // WebSocket message types
-export type WsMessageType = 'reading' | 'status' | 'history';
+export type WsMessageType = 'reading' | 'status' | 'history' | 'simulink-sample';
 
 // WebSocket message for new readings
 export interface WsReadingMessage {
@@ -40,7 +40,16 @@ export interface WsHistoryMessage {
   data: SofcReading[];
 }
 
-export type WsMessage = WsReadingMessage | WsStatusMessage | WsHistoryMessage;
+// WebSocket message for Simulink samples
+export interface WsSimulinkMessage {
+  type: 'simulink-sample';
+  payload: {
+    time: number;
+    data: Record<string, number | null>;
+  };
+}
+
+export type WsMessage = WsReadingMessage | WsStatusMessage | WsHistoryMessage | WsSimulinkMessage;
 
 // Mock SOFC performance metrics
 export interface MockSofcMetrics {

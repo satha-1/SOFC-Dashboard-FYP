@@ -10,7 +10,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { SofcReading, WsMessage, ConnectionStatus } from '../types';
 
 const MAX_HISTORY = 500;
-const WS_URL = `ws://${window.location.hostname}:3001/ws`;
+const WS_URL = `ws://${window.location.hostname}:3000/ws`;
 const RECONNECT_DELAY = 3000;
 
 interface UseLiveSOFCReturn {
@@ -74,6 +74,14 @@ export function useLiveSOFC(): UseLiveSOFCReturn {
               if (message.data.length > 0) {
                 setLatestReading(message.data[message.data.length - 1]);
               }
+              break;
+
+            case 'simulink-sample':
+              // Dispatch custom event for Simulink data
+              const simulinkEvent = new CustomEvent('simulink-sample', {
+                detail: message.payload,
+              });
+              window.dispatchEvent(simulinkEvent);
               break;
 
             case 'status':

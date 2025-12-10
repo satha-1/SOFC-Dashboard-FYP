@@ -8,8 +8,9 @@
 
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server } from 'http';
-import { SofcReading, WsMessage } from './types.js';
+import { SofcReading, WsMessage, WsSimulinkMessage } from './types.js';
 import { getReadingsHistory } from './storage.js';
+import { SimulinkSample, getSimulinkHistory } from './simulink/simStream.js';
 
 let wss: WebSocketServer | null = null;
 
@@ -29,6 +30,18 @@ export function initWebSocket(server: Server): WebSocketServer {
       data: history,
     };
     ws.send(JSON.stringify(historyMessage));
+    
+    // Send Simulink history if available
+    const simulinkHistory = getSimulinkHistory(1000);
+    if (simulinkHistory.length > 0) {
+      simulinkHistory.forEach(sample => {
+        const simulinkMessage: WsSimulinkMessage = {
+          type: 'simulink-sample',
+          payload: sample,
+        };
+        ws.send(JSON.stringify(simulinkMessage));
+      });
+    }
     
     // Send welcome status
     const statusMessage: WsMessage = {
@@ -99,6 +112,25 @@ export function broadcastStatus(level: 'info' | 'warning' | 'error', message: st
  */
 export function getConnectedClients(): number {
   return wss ? wss.clients.size : 0;
+}
+
+/**
+ * Broadcast a Simulink sample to all connected clients
+ */
+export function broadcastSimulinkSample(sample: SimulinkSample): void {
+  if (!wss) return;
+  
+  const message: WsSimulinkMessage = {
+    type: 'simulink-sample',
+    payload: sample,
+  };
+  const messageStr = JSON.stringify(message);
+  
+  wss.clients.forEach((client) => {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(messageStr);
+    }
+  });
 }
 
 /**
