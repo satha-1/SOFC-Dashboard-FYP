@@ -31,7 +31,7 @@ export function useSimulinkStream(): UseSimulinkStreamResult {
   const [fields, setFields] = useState<string[]>([]);
   const [latest, setLatest] = useState<SimulinkSample | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null); // Error state (setter not used, errors handled via console)
   const [connectionStatus, setConnectionStatus] = useState<'live' | 'idle' | 'no-data'>('no-data');
   
   const lastUpdateTimeRef = useRef<number>(0);
