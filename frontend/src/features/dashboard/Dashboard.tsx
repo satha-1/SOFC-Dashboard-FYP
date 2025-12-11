@@ -49,7 +49,7 @@ export default function Dashboard() {
   } : null;
   
   // Create display history with corrected temperatures for charts
-  const displayHistory = recentHistory.map((reading, index) => {
+  const displayHistory = recentHistory.map((reading) => {
     const readingTimeIndex = new Date(reading.ts).getTime() / 1000;
     return {
       ...reading,
