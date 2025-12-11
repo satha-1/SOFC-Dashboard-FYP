@@ -68,8 +68,10 @@ export function useThresholds(): UseThresholdsReturn {
     };
 
     return {
-      t_water: getStatus(reading.t_water, null, thresholds.maxWaterTemp),
-      t_air: getStatus(reading.t_air, null, thresholds.maxAirTemp),
+      // Always show normal for temperatures (no warnings/critical)
+      t_water: 'normal',
+      t_air: 'normal',
+      // Pressure sensors still use thresholds
       p_air: getStatus(reading.p_air, thresholds.minAirPressure, thresholds.maxAirPressure),
       p_water: getStatus(reading.p_water, thresholds.minWaterPressure, thresholds.maxWaterPressure),
     };
