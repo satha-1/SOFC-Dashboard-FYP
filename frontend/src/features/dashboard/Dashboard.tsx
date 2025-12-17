@@ -121,7 +121,7 @@ export default function Dashboard() {
         <StatCard
           label="Air Temperature"
           value={displayReading?.t_air ?? '—'}
-          unit="°C"
+          unit="°C "
           trend={getTrend(displayReading?.t_air, previousDisplayReading?.t_air)}
           trendValue={previousDisplayReading ? `${Math.abs((displayReading?.t_air ?? 0) - previousDisplayReading.t_air).toFixed(2)}°C` : undefined}
           status={alerts?.t_air}
@@ -130,23 +130,23 @@ export default function Dashboard() {
         <StatCard
           label="Air Pressure"
           value={latestReading?.p_air ?? '—'}
-          unit="V"
+          unit="atm "
           trend={getTrend(latestReading?.p_air, previousReading?.p_air)}
           trendValue={previousReading ? `${Math.abs((latestReading?.p_air ?? 0) - previousReading.p_air).toFixed(2)}V` : undefined}
           status={alerts?.p_air}
           icon={<Gauge className="w-6 h-6" />}
         />
-        <StatCard
+n        <StatCard
           label="Water Pressure"
           value={latestReading?.p_water ?? '—'}
-          unit="V"
+          unit=" × 10^5 Pa"
           trend={getTrend(latestReading?.p_water, previousReading?.p_water)}
           trendValue={previousReading ? `${Math.abs((latestReading?.p_water ?? 0) - previousReading.p_water).toFixed(2)}V` : undefined}
           status={alerts?.p_water}
           icon={<Droplets className="w-6 h-6" />}
         />
       </div>
-
+ 
       {/* Charts - Middle Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card 

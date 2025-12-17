@@ -8,11 +8,13 @@ import {
   Settings,
   Cpu,
   LineChart,
+  Network,
 } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
+  { path: '/schematic', label: 'System Schematic', icon: Network },
   { path: '/simulink', label: 'Simulation Analytics', icon: LineChart },
   { path: '/reports', label: 'Reports', icon: FileText },
   { path: '/logs', label: 'Logs', icon: List },

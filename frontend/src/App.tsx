@@ -8,6 +8,7 @@ import Logs from './features/logs/Logs';
 import UserActivity from './features/users/UserActivity';
 import Settings from './features/settings/Settings';
 import SimulinkPage from './features/simulink/SimulinkPage';
+import SchematicView from './features/schematic/SchematicView';
 import Login from './features/auth/Login';
 import Register from './features/auth/Register';
 
@@ -48,6 +49,7 @@ function App() {
       >
         <Route index element={<Dashboard />} />
         <Route path="analytics" element={<Analytics />} />
+        <Route path="schematic" element={<SchematicView />} />
         <Route path="reports" element={<Reports />} />
         <Route path="logs" element={<Logs />} />
         <Route path="users" element={<UserActivity />} />

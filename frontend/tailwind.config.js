@@ -31,6 +31,14 @@ export default {
         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'fade-in': 'fadeIn 0.5s ease-out',
         'slide-up': 'slideUp 0.4s ease-out',
+        'flow': 'flow 2s linear infinite',
+        'flow-reverse': 'flowReverse 2s linear infinite',
+        'rotate-slow': 'rotate 3s linear infinite',
+        'glow': 'glow 2s ease-in-out infinite alternate',
+        'shimmer': 'shimmer 3s ease-in-out infinite',
+        'breathe': 'breathe 2s ease-in-out infinite',
+        'particle': 'particle 1.5s linear infinite',
+        'particle-reverse': 'particleReverse 1.5s linear infinite',
       },
       keyframes: {
         fadeIn: {
@@ -40,6 +48,42 @@ export default {
         slideUp: {
           '0%': { opacity: '0', transform: 'translateY(10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        flow: {
+          '0%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(100%)' },
+        },
+        flowReverse: {
+          '0%': { transform: 'translateX(100%)' },
+          '100%': { transform: 'translateX(-100%)' },
+        },
+        rotate: {
+          '0%': { transform: 'rotate(0deg)' },
+          '100%': { transform: 'rotate(360deg)' },
+        },
+        glow: {
+          '0%': { boxShadow: '0 0 5px rgba(74, 112, 169, 0.5), 0 0 10px rgba(74, 112, 169, 0.3)' },
+          '100%': { boxShadow: '0 0 15px rgba(74, 112, 169, 0.8), 0 0 25px rgba(74, 112, 169, 0.5)' },
+        },
+        shimmer: {
+          '0%, 100%': { opacity: '0.6', transform: 'scale(1)' },
+          '50%': { opacity: '1', transform: 'scale(1.05)' },
+        },
+        breathe: {
+          '0%, 100%': { transform: 'scale(1)' },
+          '50%': { transform: 'scale(1.05)' },
+        },
+        particle: {
+          '0%': { transform: 'translateX(0) translateY(0)', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { transform: 'translateX(32px) translateY(-4px)', opacity: '0' },
+        },
+        particleReverse: {
+          '0%': { transform: 'translateX(32px) translateY(0)', opacity: '0' },
+          '10%': { opacity: '1' },
+          '90%': { opacity: '1' },
+          '100%': { transform: 'translateX(0) translateY(-4px)', opacity: '0' },
         },
       },
     },
