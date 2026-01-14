@@ -9,12 +9,14 @@ import {
   Cpu,
   LineChart,
   Network,
+  FlaskConical,
 } from 'lucide-react';
 
 const navItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/analytics', label: 'Analytics', icon: BarChart3 },
   { path: '/schematic', label: 'System Schematic', icon: Network },
+  { path: '/electrolyte', label: 'Electrolyte Comparison', icon: FlaskConical },
   { path: '/simulink', label: 'Simulation Analytics', icon: LineChart },
   { path: '/reports', label: 'Reports', icon: FileText },
   { path: '/logs', label: 'Logs', icon: List },
